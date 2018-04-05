@@ -25,7 +25,7 @@ const COLOR_ARGUMENT = 'color';
 const NUMBER_ARGUMENT = 'number';
 
 
-exports.sillyNameMaker = functions.https.onRequest((request, response) => {
+exports.speech2browser = functions.https.onRequest((request, response) => {
     const app = new App({request, response});
     console.log('Request headers: ' + JSON.stringify(request.headers));
     console.log('Request body: ' + JSON.stringify(request.body));
