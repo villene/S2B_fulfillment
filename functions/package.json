@@ -10,7 +10,7 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "actions-on-google": "^1.0.0",
+    "actions-on-google": "^1.10.0",
     "firebase": "^4.2.1",
     "firebase-admin": "~5.11.0",
     "firebase-functions": "^1.0.0"
