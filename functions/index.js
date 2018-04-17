@@ -16,34 +16,68 @@ const config = {
 
 firebase.initializeApp(config);
 
-var speechdb = firebase.database().ref();
-
-const NAME_ACTION = 'scroll';
 const DIRECTION_ARGUMENT = 'direction';
 const PIXELS_ARGUMENT = 'pixels';
+const FOCUS_ARGUMENT = 'focusable';
+const NUMBER_ARGUMENT = 'number';
 
 
 exports.speech2browser = functions.https.onRequest((request, response) => {
-    const app = new App({request, response});
+    const app = new App({request, response}),
+        // userId = app.getUser().userId,
+        // speechdb = firebase.database().ref(userId);
+    speechdb = firebase.database().ref();
+
     // console.log('Request headers: ' + JSON.stringify(request.headers));
     // console.log('Request body: ' + JSON.stringify(request.body));
 
-    function makeScroll (app) {
-        console.log(NAME_ACTION);
+    function doScroll (app) {
         let direction = app.getArgument(DIRECTION_ARGUMENT);
         let pixels = app.getArgument(PIXELS_ARGUMENT);
 
-        speechdb.set({
+        sendToDB({
             action: "scroll",
             direction: direction,
-            pixels: pixels
+            pixels: pixels,
+            complete: 0
         });
 
         app.tell('Done');
     }
 
+    function doHighlight (app) {
+        let focus = app.getArgument(FOCUS_ARGUMENT);
+
+        sendToDB({
+            action: "highlight",
+            focusable: focus,
+            complete: 0
+        });
+
+        // app.tell('Done');
+    }
+
+    function doSelectNum (app) {
+        let num = app.getArgument(NUMBER_ARGUMENT);
+
+        sendToDB({
+            action: "select",
+            num: num,
+            name: "",
+            complete: 0
+        });
+
+        app.tell('Done');
+    }
+
+    function sendToDB (command) {
+        speechdb.set(command);
+    }
+
     let actionMap = new Map();
-    actionMap.set(NAME_ACTION, makeScroll);
+    actionMap.set('scroll', doScroll);   
+    actionMap.set('highlight', doHighlight);
+    actionMap.set('selectNum', doSelectNum);
 
 
     app.handleRequest(actionMap);
