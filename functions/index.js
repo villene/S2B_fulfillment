@@ -41,8 +41,6 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             pixels: pixels,
             complete: 0
         });
-
-        app.tell('Done');
     }
 
     function doHighlight (app) {
@@ -53,8 +51,6 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             focusable: focus,
             complete: 0
         });
-
-        // app.tell('Done');
     }
 
     function doSelectNum (app) {
@@ -66,8 +62,17 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             name: "",
             complete: 0
         });
+    }
 
-        app.tell('Done');
+    function doActivate (app) {
+        let num = app.getArgument(NUMBER_ARGUMENT);
+
+        sendToDB({
+            action: "activate",
+            num: num,
+            name: "",
+            complete: 0
+        });
     }
 
     function sendToDB (command) {
@@ -78,6 +83,7 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
     actionMap.set('scroll', doScroll);   
     actionMap.set('highlight', doHighlight);
     actionMap.set('selectNum', doSelectNum);
+    actionMap.set('activate', doActivate);
 
 
     app.handleRequest(actionMap);
