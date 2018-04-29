@@ -20,6 +20,7 @@ const DIRECTION_ARGUMENT = 'direction';
 const PIXELS_ARGUMENT = 'pixels';
 const FOCUS_ARGUMENT = 'focusable';
 const NUMBER_ARGUMENT = 'number';
+const TEXT_ARGUMENT = 'text';
 
 
 exports.speech2browser = functions.https.onRequest((request, response) => {
@@ -75,6 +76,33 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
         });
     }
 
+    function doWrite (app) {
+        let text = app.getArgument(TEXT_ARGUMENT);
+
+        sendToDB({
+            action: "write",
+            text: text,
+            hasInput: 1,
+            complete: 0
+        });
+
+        speechdb.on('value', (snapshot) => {
+          if (!snapshot.val().hasInput) {
+              app.ask('Please select or activate an input element first!');
+          }
+        });
+    }
+
+    function doRead (app) {
+        let num = app.getArgument(NUMBER_ARGUMENT);
+
+        sendToDB({
+            action: "read",
+            num: num,
+            complete: 0
+        });
+    }
+
     function sendToDB (command) {
         speechdb.set(command);
     }
@@ -84,6 +112,8 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
     actionMap.set('highlight', doHighlight);
     actionMap.set('selectNum', doSelectNum);
     actionMap.set('activate', doActivate);
+    actionMap.set('write', doWrite);
+    actionMap.set('read', doRead);
 
 
     app.handleRequest(actionMap);
