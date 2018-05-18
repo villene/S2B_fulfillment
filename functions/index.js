@@ -42,6 +42,8 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             pixels: pixels,
             complete: 0
         });
+
+        app.tell("Scrolled");
     }
 
     function doHighlight (app) {
@@ -52,6 +54,8 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             focusable: focus,
             complete: 0
         });
+
+        app.tell("Elements highlighted");
     }
 
     function doSelectNum (app) {
@@ -63,6 +67,8 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             name: "",
             complete: 0
         });
+
+        app.tell("Element selected");
     }
 
     function doActivate (app) {
@@ -73,6 +79,15 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             num: num,
             name: "",
             complete: 0
+        });
+
+        speechdb.on('value', (snapshot) => {
+            if (!snapshot.val().hasElement) {
+                app.ask('Please select an element first!');
+            }
+            else {
+                app.tell("Element activated");
+            }
         });
     }
 
@@ -100,6 +115,12 @@ exports.speech2browser = functions.https.onRequest((request, response) => {
             action: "read",
             num: num,
             complete: 0
+        });
+
+        speechdb.on('value', (snapshot) => {
+            if (!snapshot.val().hasElement) {
+                app.ask('Please select an element first!');
+            }
         });
     }
 
